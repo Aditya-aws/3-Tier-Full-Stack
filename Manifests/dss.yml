@@ -63,16 +63,29 @@ spec:
                 secretKeyRef:
                   name: yelp-camp-secrets
                   key: SECRET
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           livenessProbe:
             httpGet:
-              path: /
+              path: /health  # If your app has a /health endpoint, use that
               port: 3000
-            initialDelaySeconds: 30   # Adjust the initial delay here
+            initialDelaySeconds: 60   # Give more time for app startup
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /
+              path: /health  # Ensure this is the correct path for health check
               port: 3000
-            initialDelaySeconds: 30   # Adjust the initial delay here
+            initialDelaySeconds: 60   # Increased delay for readiness probe
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
 
 ---
 apiVersion: v1
